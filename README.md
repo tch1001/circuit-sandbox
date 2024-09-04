@@ -69,6 +69,66 @@ The Windows releases are built with Boost 1.67.0, SDL2 2.0.8, SDL2_ttf 2.0.14, a
     * `NFD_Lib_Release_x64`
 
 3. Build Circuit Sandbox; it should work!
+### Building on Mac (ARM)
+
+```
+mkdir dependencies && cd dependencies
+wget https://archives.boost.io/release/1.85.0/source/boost_1_85_0_rc3.tar.gz && tar -xf boost_1_85_0_rc3.tar.gz
+wget https://github.com/libsdl-org/SDL/releases/download/release-2.30.5/SDL2-2.30.5.tar.gz && tar -xf SDL2-2.30.5.tar.gz 
+wget https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.22.0/SDL2_ttf-2.22.0.tar.gz && tar -xf SDL2_ttf-2.22.0.tar.gz 
+
+# Note: wrong version of NFD, but use btzy's
+wget https://github.com/mlabbe/nativefiledialog/archive/refs/tags/release_116.tar.gz && tar -xf release_116.tar.gz
+
+# correct
+wget https://github.com/btzy/nativefiledialog-extended/archive/refs/tags/v1.2.1.tar.gz -O btzy.tar.gz && tar -xf btzy.tar.gz
+
+brew install sdl2
+brew --prefix sdl2
+g++ -S CircuitSandbox/main.cpp --verbose
+g++ -S CircuitSandbox/main.cpp --verbose -I`brew --prefix sdl2`/include/SDL2
+g++ -S CircuitSandbox/main.cpp --verbose -I ./dependencies/SDL2-2.30.5/include/ -I ./dependencies/SDL2_ttf-2.22.0/ 
+g++ --std=c++17 -S CircuitSandbox/main.cpp --verbose -I ./dependencies/SDL2-2.30.5/include/ -I ./dependencies/SDL2_ttf-2.22.0/ -I ./dependencies/nativefiledialog-release_116/src/include/ 
+g++ --std=c++17 -S CircuitSandbox/main.cpp --verbose -I ./dependencies/SDL2-2.30.5/include/ -I ./dependencies/SDL2_ttf-2.22.0/ -I ./dependencies/nativefiledialog-release_116/src/include/ -I dependencies/boost_1_85_0/
+
+# works
+g++ --std=c++17 -S CircuitSandbox/main.cpp --verbose -I ./dependencies/SDL2-2.30.5/include/ -I ./dependencies/SDL2_ttf-2.22.0/ -I ./dependencies/boost_1_85_0/ -I ./dependencies/nativefiledialog-extended-1.2.1/src/include/
+
+cd dependencies/nativefiledialog-extended-1.2.1
+cmake .
+make -j4
+
+cd dependencies/SDL2-2.30.5 
+mkdir build && cd build
+cmake -S /Users/bytedance/Documents/circuit-sandbox/dependencies/SDL2-2.30.5 -B .
+make -j4
+
+g++ main.s 
+g++ main.s -L ./dependencies/SDL2-2.30.5/build/ --verbose -lSDL2
+g++ main.s -L ./dependencies/SDL2-2.30.5/build/ --verbose -lSDL2 -ObjC -framework Cocoa
+
+as -arch arm64 -o main.o main.s
+g++ main.o -L ./dependencies/SDL2-2.30.5/build/ -lSDL2 -ObjC -framework Cocoa -arch arm64  --verbose
+
+g++ main.o -L ./dependencies/SDL2-2.30.5/build/ -lSDL2 -ObjC -framework Cocoa -arch arm64 --verbose -framework CoreAudio -framework AudioToolbox -framework CoreHaptics -framework CoreVideo -framework ForceFeedback -framework GameController -framework Metal -framework IOKit -framework Carbon -lSDL2_ttf -L ./dependencies/SDL2_ttf-2.22.0/build
+
+brew install freetype 
+cd dependencies/SDL2_ttf-2.22.0
+mkdir build && cd build
+cmake ..
+make -j4
+
+g++ main.o -L ./dependencies/SDL2-2.30.5/build/ -lSDL2 -ObjC -framework Cocoa -arch arm64 --verbose -framework CoreAudio -framework AudioToolbox -framework CoreHaptics -framework CoreVideo -framework ForceFeedback -framework GameController -framework Metal -framework IOKit -framework Carbon -lSDL2_ttf -L ./dependencies/SDL2_ttf-2.22.0/build -lNFD -L ./dependencies/nativefiledialog-extended-1.2.1/src/
+```
+
+Then go download [X11](https://www.xquartz.org/) for mac
+
+Idk why this doesn't work? 
+```
+g++ --std=c++17 -S CircuitSandbox/main.cpp --verbose -I ./dependencies/SDL2-2.30.5/include/ -I ./dependencies/SDL2_ttf-2.22.0/ -I ./dependencies/boost_1_85_0/ -I ./dependencies/nativefiledialog-extended-1.2.1/src/include/ -S CircuitSandbox/x11_dpi_scaling.cpp -I /usr/X11/include/ -D __APPLE__
+```
+
+Use `make -r` to avoid [Implicit Rules](https://web.mit.edu/gnu/doc/html/make_10.html#SEC88)
 
 ## Licensing
 

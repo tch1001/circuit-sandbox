@@ -53,3 +53,7 @@ xcuserdata/
 
 # Doxygen documentation
 documentation/
+
+# my own
+dependencies/
+*.s

@@ -29,13 +29,13 @@ namespace WebResource {
 #else
 
 
-// browser launching not supported :(
-// TODO: add support for other platforms
-namespace WebResource {
-    bool launch(const url_char_t* url) {
-        return false;
-    }
-}
+// // browser launching not supported :(
+// // TODO: add support for other platforms
+// namespace WebResource {
+//     bool launch(const url_char_t* url) {
+//         return false;
+//     }
+// }
 
 
 #endif

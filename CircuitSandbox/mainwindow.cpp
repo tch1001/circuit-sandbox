@@ -198,17 +198,17 @@ bool MainWindow::updateDpiFields(bool useWindow) {
     // well expect horizontal and vertical dpis to be the same
     // this function might fail to get dpi on some setups
     int dpi;
-#if defined(__linux__)
-    if (DpiScaling::getDpi(useWindow ? window : nullptr, display_index, dpi_float)) {
-        // success
-        dpi = static_cast<int>(dpi_float + 0.5f); // round to nearest int
-    }
-#else
+// #if defined(__linux__)
+//     if (DpiScaling::getDpi(useWindow ? window : nullptr, display_index, dpi_float)) {
+//         // success
+//         dpi = static_cast<int>(dpi_float + 0.5f); // round to nearest int
+//     }
+// #else
     if (SDL_GetDisplayDPI(display_index, nullptr, &dpi_float, nullptr) == 0) {
         // success
         dpi = static_cast<int>(dpi_float + 0.5f); // round to nearest int
     }
-#endif
+// #endif
     else {
         dpi = 96;
     }
@@ -655,9 +655,9 @@ void MainWindow::processKeyboardEvent(const SDL_KeyboardEvent& event) {
                     return;
                 case SDL_SCANCODE_F1: [[fallthrough]];
                 case SDL_SCANCODE_HELP:
-                    if (WebResource::launch(WebResource::USER_MANUAL)) {
-                        notificationDisplay.add(NotificationFlags::DEFAULT, 5s, "Opening user manual in browser ...");
-                    }
+                    // if (WebResource::launch(WebResource::USER_MANUAL)) {
+                    //     notificationDisplay.add(NotificationFlags::DEFAULT, 5s, "Opening user manual in browser ...");
+                    // }
                     return;
                 default:
                     break;
